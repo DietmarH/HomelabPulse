@@ -10,4 +10,10 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Core\HomelabPulse.Core\HomelabPulse.Core.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ports.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="HomelabPulse.Core.Tests" />
+  </ItemGroup>
 </Project>
