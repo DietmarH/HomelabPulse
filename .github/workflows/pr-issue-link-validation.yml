@@ -1,0 +1,30 @@
+name: pr-issue-link-validation
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR body contains issue reference
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          PR_BODY="${{ github.event.pull_request.body }}"
+
+          # Check for common closing keywords followed by #<issue-number>
+          if echo "${PR_BODY}" | grep -iE '(closes|closed|close|fixes|fixed|fix|resolves|resolved|resolve)\s+#[0-9]+' > /dev/null; then
+            echo "PR body contains a valid issue reference."
+            exit 0
+          fi
+
+          echo "PR body does not contain a valid issue reference."
+          echo "Please add 'Closes #<issue-number>' to your PR body."
+          echo "Example: 'Closes #7' or 'Fixes #12'"
+          exit 1
