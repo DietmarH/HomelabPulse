@@ -1,5 +1,8 @@
 name: branch-name-validation
 
+permissions:
+  contents: read
+
 on:
   push:
     branches:
