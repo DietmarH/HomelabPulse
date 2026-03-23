@@ -33,7 +33,7 @@ jobs:
           fi
 
           # Dependabot branches use their own naming convention; skip validation for automated dependency updates.
-          if [ "${GITHUB_ACTOR}" = "dependabot[bot]" ] || [[ "${BRANCH_NAME}" == dependabot/* ]]; then
+          if [ "${GITHUB_ACTOR}" = "dependabot[bot]" ]; then
             echo "Skipping branch name validation for Dependabot branch '${BRANCH_NAME}'."
             exit 0
           fi
