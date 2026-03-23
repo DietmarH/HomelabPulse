@@ -1,0 +1,84 @@
+name: ci
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Detect .NET project files
+        id: detect_dotnet
+        shell: bash
+        run: |
+          shopt -s globstar nullglob
+          slnx=(**/*.slnx)
+          sln=(**/*.sln)
+          csproj=(**/*.csproj)
+
+          if [ ${#slnx[@]} -eq 0 ] && [ ${#sln[@]} -eq 0 ] && [ ${#csproj[@]} -eq 0 ]; then
+            echo "has_dotnet=false" >> "$GITHUB_OUTPUT"
+            echo "No .slnx, .sln, or .csproj found yet. Skipping .NET steps."
+            exit 0
+          fi
+
+          echo "has_dotnet=true" >> "$GITHUB_OUTPUT"
+          if [ ${#slnx[@]} -gt 0 ]; then
+            echo "dotnet_target=${slnx[0]}" >> "$GITHUB_OUTPUT"
+          elif [ ${#sln[@]} -gt 0 ]; then
+            echo "dotnet_target=${sln[0]}" >> "$GITHUB_OUTPUT"
+          else
+            echo "dotnet_target=${csproj[0]}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Restore
+        if: steps.detect_dotnet.outputs.has_dotnet == 'true'
+        run: dotnet restore "${{ steps.detect_dotnet.outputs.dotnet_target }}"
+
+      - name: Build
+        if: steps.detect_dotnet.outputs.has_dotnet == 'true'
+        run: dotnet build "${{ steps.detect_dotnet.outputs.dotnet_target }}" --configuration Release --no-restore
+
+      - name: Format Check
+        if: steps.detect_dotnet.outputs.has_dotnet == 'true'
+        run: dotnet format "${{ steps.detect_dotnet.outputs.dotnet_target }}" --verify-no-changes --no-restore
+
+      - name: Test
+        if: steps.detect_dotnet.outputs.has_dotnet == 'true'
+        run: dotnet test "${{ steps.detect_dotnet.outputs.dotnet_target }}" --configuration Release --no-build --collect:"XPlat Code Coverage" --results-directory ./coverage
+
+      - name: Detect coverage files
+        if: steps.detect_dotnet.outputs.has_dotnet == 'true'
+        id: detect_coverage
+        shell: bash
+        run: |
+          shopt -s globstar nullglob
+          files=(./coverage/**/coverage.cobertura.xml)
+          if [ ${#files[@]} -gt 0 ]; then
+            echo "has_coverage=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_coverage=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Generate coverage report
+        if: steps.detect_coverage.outputs.has_coverage == 'true'
+        uses: danielpalme/ReportGenerator-GitHub-Action@5
+        with:
+          reports: ./coverage/**/coverage.cobertura.xml
+          targetdir: ./coverage/report
+          reporttypes: MarkdownSummaryGithub
+
+      - name: Write coverage to job summary
+        if: steps.detect_coverage.outputs.has_coverage == 'true'
+        shell: bash
+        run: cat ./coverage/report/SummaryGithub.md >> "$GITHUB_STEP_SUMMARY"

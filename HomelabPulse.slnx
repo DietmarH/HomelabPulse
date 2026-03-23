@@ -1,0 +1,23 @@
+<Solution>
+  <Folder Name="/src/Core/">
+    <Project Path="src/Core/HomelabPulse.Core/HomelabPulse.Core.csproj" />
+  </Folder>
+  <Folder Name="/src/Infrastructure/">
+    <Project Path="src/Infrastructure/HomelabPulse.Integrations.Synology/HomelabPulse.Integrations.Synology.csproj" />
+    <Project Path="src/Infrastructure/HomelabPulse.Integrations.Kubernetes/HomelabPulse.Integrations.Kubernetes.csproj" />
+    <Project Path="src/Infrastructure/HomelabPulse.Persistence/HomelabPulse.Persistence.csproj" />
+  </Folder>
+  <Folder Name="/src/Services/">
+    <Project Path="src/Services/HomelabPulse.Api/HomelabPulse.Api.csproj" />
+  </Folder>
+  <Folder Name="/src/UI/">
+    <Project Path="src/UI/HomelabPulse.ApiClient/HomelabPulse.ApiClient.csproj" />
+    <Project Path="src/UI/HomelabPulse.Desktop/HomelabPulse.Desktop.csproj" />
+    <Project Path="src/UI/HomelabPulse.Blazor/HomelabPulse.Blazor.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/HomelabPulse.Core.Tests/HomelabPulse.Core.Tests.csproj" />
+    <Project Path="tests/HomelabPulse.Integrations.Tests/HomelabPulse.Integrations.Tests.csproj" />
+    <Project Path="tests/HomelabPulse.Api.IntegrationTests/HomelabPulse.Api.IntegrationTests.csproj" />
+  </Folder>
+</Solution>
