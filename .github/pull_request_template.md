@@ -2,6 +2,10 @@
 
 Describe what changed and why.
 
+## Issue
+
+Closes #
+
 ## Type of Change
 
 - [ ] Feature
@@ -21,3 +25,6 @@ Describe what changed and why.
 - [ ] I kept the change focused
 - [ ] I added/updated tests where needed
 - [ ] I updated relevant docs
+- [ ] The PR body includes `Closes #<issue-number>`
+- [ ] I completed a review before merge
+- [ ] I will use squash merge
