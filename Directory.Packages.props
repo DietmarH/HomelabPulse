@@ -4,7 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- Versioning -->
-    <PackageVersion Include="MinVer" Version="4.3.0" />
+    <PackageVersion Include="MinVer" Version="7.0.0" />
 
     <!-- Avalonia UI -->
     <PackageVersion Include="Avalonia" Version="11.3.12" />
