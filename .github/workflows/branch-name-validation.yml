@@ -1,0 +1,43 @@
+name: branch-name-validation
+
+on:
+  push:
+    branches:
+      - "**"
+    tags-ignore:
+      - "**"
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate branch name
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then
+            BRANCH_NAME="${GITHUB_HEAD_REF}"
+          else
+            BRANCH_NAME="${GITHUB_REF_NAME}"
+          fi
+
+          # main is allowed for post-merge push events; all feature work must follow issue-linked naming.
+          if [ "${BRANCH_NAME}" = "main" ]; then
+            echo "Branch '${BRANCH_NAME}' is allowed."
+            exit 0
+          fi
+
+          PATTERN='^(feature|fix|docs|chore)/[0-9]+-[a-z0-9]+(-[a-z0-9]+)*$'
+
+          if [[ "${BRANCH_NAME}" =~ ${PATTERN} ]]; then
+            echo "Branch '${BRANCH_NAME}' is valid."
+            exit 0
+          fi
+
+          echo "Invalid branch name: '${BRANCH_NAME}'."
+          echo "Expected format: <type>/<issue-number>-<slug>"
+          echo "Allowed types: feature, fix, docs, chore"
+          echo "Examples: feature/12-synology-discovery, docs/7-enforce-github-workflow"
+          exit 1
