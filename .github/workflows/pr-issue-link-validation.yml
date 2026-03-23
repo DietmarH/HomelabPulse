@@ -18,6 +18,11 @@ jobs:
         run: |
           set -euo pipefail
 
+          # Skip validation for Dependabot or automation branches to avoid blocking dependency updates
+          if [ "${{ github.actor }}" = "dependabot[bot]" ] || [[ "${{ github.head_ref }}" == dependabot/* ]]; then
+            echo "Skipping PR issue link validation for Dependabot/automation PR."
+            exit 0
+          fi
           PR_BODY="${{ github.event.pull_request.body }}"
 
           # Check for common closing keywords followed by #<issue-number>
