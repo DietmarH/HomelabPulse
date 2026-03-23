@@ -21,7 +21,7 @@ jobs:
           PR_BODY="${{ github.event.pull_request.body }}"
 
           # Check for common closing keywords followed by #<issue-number>
-          if echo "${PR_BODY}" | grep -iE '(closes|closed|close|fixes|fixed|fix|resolves|resolved|resolve)\s+#[0-9]+' > /dev/null; then
+          if echo "${PR_BODY}" | grep -iE '(closes|closed|close|fixes|fixed|fix|resolves|resolved|resolve)[[:space:]]+#[0-9]+' > /dev/null; then
             echo "PR body contains a valid issue reference."
             exit 0
           fi
