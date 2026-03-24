@@ -84,9 +84,12 @@ internal sealed class HostProfileRepository : IHostProfileRepository
 
     private async Task WriteAsync(Dictionary<string, HostProfile> map, CancellationToken ct)
     {
-        var dir = Path.GetDirectoryName(_filePath)!;
-        Directory.CreateDirectory(dir);
-        var tmp = Path.Combine(dir, Path.GetRandomFileName());
+        var dir = Path.GetDirectoryName(_filePath);
+        if (!string.IsNullOrEmpty(dir))
+        {
+            Directory.CreateDirectory(dir);
+        }
+        var tmp = Path.Combine(dir ?? ".", Path.GetRandomFileName());
         await File.WriteAllTextAsync(tmp, JsonSerializer.Serialize(map, WriteOptions), ct);
         File.Move(tmp, _filePath, overwrite: true);
     }

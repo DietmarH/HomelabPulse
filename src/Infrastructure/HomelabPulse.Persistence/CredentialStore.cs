@@ -76,9 +76,12 @@ internal sealed class CredentialStore : ICredentialStore
 
     private async Task WriteAsync(Dictionary<string, string> store, CancellationToken ct)
     {
-        var dir = Path.GetDirectoryName(_filePath)!;
-        Directory.CreateDirectory(dir);
-        var tmp = Path.Combine(dir, Path.GetRandomFileName());
+        var dir = Path.GetDirectoryName(_filePath);
+        if (!string.IsNullOrEmpty(dir))
+        {
+            Directory.CreateDirectory(dir);
+        }
+        var tmp = Path.Combine(dir ?? ".", Path.GetRandomFileName());
         await File.WriteAllTextAsync(tmp, JsonSerializer.Serialize(store), ct);
         File.Move(tmp, _filePath, overwrite: true);
     }
