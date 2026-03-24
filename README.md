@@ -1,12 +1,12 @@
 # HomelabPulse
 
-[![CI](https://github.com/your-github-username/HomelabPulse/actions/workflows/ci.yml/badge.svg)](https://github.com/your-github-username/HomelabPulse/actions/workflows/ci.yml)
+[![CI](https://github.com/DietmarH/HomelabPulse/actions/workflows/ci.yml/badge.svg)](https://github.com/DietmarH/HomelabPulse/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![.NET](https://img.shields.io/badge/.NET-10.0-purple)](https://dotnet.microsoft.com/)
 
 **HomelabPulse** is a C# Avalonia desktop application that provides centralized network visibility across your home lab. Instead of blind port scanning, it uses authenticated API and protocol-level interrogation to show you exactly what is running — and why — across your servers and clusters.
 
-> **Current scope:** Synology NAS and k3s clusters. Additional platforms (Proxmox, Windows, Linux) are planned for future milestones.
+> **Current scope:** Synology NAS and k3s clusters. Phase 2 adds an optional API server, HTTP client, and Blazor web dashboard.
 
 ---
 
@@ -92,7 +92,7 @@ For the services you intend to monitor:
 > The project is in early development. These steps will be updated as project files are added.
 
 ```bash
-git clone https://github.com/your-github-username/HomelabPulse.git
+git clone https://github.com/DietmarH/HomelabPulse.git
 cd HomelabPulse
 dotnet restore
 dotnet build
@@ -137,15 +137,32 @@ HomelabPulse/
 
 ## Roadmap
 
-| Milestone | Platforms |
-|---|---|
-| **v0.1** — initial release | Synology NAS, k3s |
-| **v0.2** | Proxmox hypervisor |
-| **v0.3** | Windows Server (WMI/CIM) |
-| **v0.4** | Linux servers (SSH) |
-| **Future** | Reporting, alerting, export |
+### Phase 0 — Foundation ✅
 
-See [open issues](https://github.com/your-github-username/HomelabPulse/issues) for planned work and known bugs.
+| Milestone | Description |
+|---|---|
+| **0.1** — Persistence layer | `CredentialStore`, `HostProfileRepository`, `PortDatabaseService`, DI registration |
+
+### Phase 1 — Direct Core Integration
+
+The Avalonia desktop app runs all integrations in-process (`BackendMode.Direct`).
+
+| Milestone | Description |
+|---|---|
+| **1.1** — Synology DSM system services | Authenticated DSM API; first live data in the port table |
+| **1.2** — Universal container interrogation | Synology Container Manager + Kubernetes/k3s via SSH socket stats |
+| **1.3** — Synology advanced network & macvlan | Surface macvlan interfaces invisible to host-side port scans |
+| **1.4** — k3s cluster-wide discovery | Map every internal k3s service to its external access point |
+
+### Phase 2 — Expanding the Ecosystem
+
+| Milestone | Description |
+|---|---|
+| **2.1** — `HomelabPulse.Api` | ASP.NET Core Minimal API exposing nodes, scan, credentials, and profiles over HTTP |
+| **2.2** — `HomelabPulse.ApiClient` | HTTP implementations of Core interfaces enabling `BackendMode.Api` with no UI changes |
+| **2.3** — Blazor web dashboard | Browser-based view of lab status consuming the API; real-time updates via polling or SignalR |
+
+See [open issues](https://github.com/DietmarH/HomelabPulse/issues) for planned work and known bugs.
 
 ---
 

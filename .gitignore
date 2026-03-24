@@ -243,3 +243,5 @@ ASALocalRun/
 
 # MSBuild Cache
 msbuild.binlog
+
+HomelabPulse.code-workspace
