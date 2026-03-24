@@ -14,16 +14,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check PR body contains issue reference
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+          GH_ACTOR: ${{ github.actor }}
+          GH_HEAD_REF: ${{ github.head_ref }}
         shell: bash
         run: |
           set -euo pipefail
 
           # Skip validation for Dependabot or automation branches to avoid blocking dependency updates
-          if [ "${{ github.actor }}" = "dependabot[bot]" ] || [[ "${{ github.head_ref }}" == dependabot/* ]]; then
+          if [ "${GH_ACTOR}" = "dependabot[bot]" ] || [[ "${GH_HEAD_REF}" == dependabot/* ]]; then
             echo "Skipping PR issue link validation for Dependabot/automation PR."
             exit 0
           fi
-          PR_BODY="${{ github.event.pull_request.body }}"
 
           # Check for common closing keywords followed by #<issue-number>
           if echo "${PR_BODY}" | grep -iE '(closes|closed|close|fixes|fixed|fix|resolves|resolved|resolve)[[:space:]]+#[0-9]+' > /dev/null; then
