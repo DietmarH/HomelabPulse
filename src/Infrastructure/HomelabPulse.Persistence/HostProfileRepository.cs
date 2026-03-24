@@ -14,12 +14,30 @@ internal sealed class HostProfileRepository : IHostProfileRepository
     public HostProfileRepository(string filePath) => _filePath = filePath;
 
     public async Task<IReadOnlyList<HostProfile>> GetAllAsync(CancellationToken ct = default)
-        => [.. (await ReadAsync(ct)).Values];
+    {
+        await _lock.WaitAsync(ct);
+        try
+        {
+            return [.. (await ReadAsync(ct)).Values];
+        }
+        finally
+        {
+            _lock.Release();
+        }
+    }
 
     public async Task<HostProfile?> GetAsync(string id, CancellationToken ct = default)
     {
-        var map = await ReadAsync(ct);
-        return map.TryGetValue(id, out var profile) ? profile : null;
+        await _lock.WaitAsync(ct);
+        try
+        {
+            var map = await ReadAsync(ct);
+            return map.TryGetValue(id, out var profile) ? profile : null;
+        }
+        finally
+        {
+            _lock.Release();
+        }
     }
 
     public async Task SaveAsync(HostProfile profile, CancellationToken ct = default)
@@ -66,7 +84,10 @@ internal sealed class HostProfileRepository : IHostProfileRepository
 
     private async Task WriteAsync(Dictionary<string, HostProfile> map, CancellationToken ct)
     {
-        Directory.CreateDirectory(Path.GetDirectoryName(_filePath)!);
-        await File.WriteAllTextAsync(_filePath, JsonSerializer.Serialize(map, WriteOptions), ct);
+        var dir = Path.GetDirectoryName(_filePath)!;
+        Directory.CreateDirectory(dir);
+        var tmp = Path.Combine(dir, Path.GetRandomFileName());
+        await File.WriteAllTextAsync(tmp, JsonSerializer.Serialize(map, WriteOptions), ct);
+        File.Move(tmp, _filePath, overwrite: true);
     }
 }
