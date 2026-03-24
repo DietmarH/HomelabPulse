@@ -18,10 +18,18 @@ internal sealed class CredentialStore : ICredentialStore
 
     public async Task<string?> GetAsync(string credentialId, CancellationToken ct = default)
     {
-        var store = await ReadAsync(ct);
-        return store.TryGetValue(credentialId, out var encrypted)
-            ? _protector.Unprotect(encrypted)
-            : null;
+        await _lock.WaitAsync(ct);
+        try
+        {
+            var store = await ReadAsync(ct);
+            return store.TryGetValue(credentialId, out var encrypted)
+                ? _protector.Unprotect(encrypted)
+                : null;
+        }
+        finally
+        {
+            _lock.Release();
+        }
     }
 
     public async Task SetAsync(string credentialId, string secret, CancellationToken ct = default)
@@ -68,7 +76,10 @@ internal sealed class CredentialStore : ICredentialStore
 
     private async Task WriteAsync(Dictionary<string, string> store, CancellationToken ct)
     {
-        Directory.CreateDirectory(Path.GetDirectoryName(_filePath)!);
-        await File.WriteAllTextAsync(_filePath, JsonSerializer.Serialize(store), ct);
+        var dir = Path.GetDirectoryName(_filePath)!;
+        Directory.CreateDirectory(dir);
+        var tmp = Path.Combine(dir, Path.GetRandomFileName());
+        await File.WriteAllTextAsync(tmp, JsonSerializer.Serialize(store), ct);
+        File.Move(tmp, _filePath, overwrite: true);
     }
 }
