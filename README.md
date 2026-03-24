@@ -92,7 +92,7 @@ For the services you intend to monitor:
 > The project is in early development. These steps will be updated as project files are added.
 
 ```bash
-git clone https://github.com/your-github-username/HomelabPulse.git
+git clone https://github.com/DietmarH/HomelabPulse.git
 cd HomelabPulse
 dotnet restore
 dotnet build
