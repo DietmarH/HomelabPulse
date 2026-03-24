@@ -6,7 +6,7 @@
 
 **HomelabPulse** is a C# Avalonia desktop application that provides centralized network visibility across your home lab. Instead of blind port scanning, it uses authenticated API and protocol-level interrogation to show you exactly what is running — and why — across your servers and clusters.
 
-> **Current scope:** Synology NAS and k3s clusters. Additional platforms (Proxmox, Windows, Linux) are planned for future milestones.
+> **Current scope:** Synology NAS and k3s clusters. Phase 2 adds an optional API server, HTTP client, and Blazor web dashboard.
 
 ---
 
