@@ -18,10 +18,16 @@ internal sealed class PortDatabaseService : IPortDatabaseService
 
     private static IReadOnlyDictionary<string, string> Load()
     {
-        using var stream = Assembly
-            .GetExecutingAssembly()
-            .GetManifestResourceStream("HomelabPulse.Persistence.Resources.ports.json")!;
+        var assembly = Assembly.GetExecutingAssembly();
+        const string resourceName = "HomelabPulse.Persistence.Resources.ports.json";
 
+        using var stream = assembly.GetManifestResourceStream(resourceName);
+        if (stream is null)
+        {
+            var availableResources = string.Join(", ", assembly.GetManifestResourceNames());
+            throw new InvalidOperationException(
+                $"Embedded resource '{resourceName}' was not found. Available resources: {availableResources}");
+        }
         return JsonSerializer.Deserialize<Dictionary<string, string>>(stream)
             ?? throw new InvalidOperationException("Failed to load embedded ports.json.");
     }
