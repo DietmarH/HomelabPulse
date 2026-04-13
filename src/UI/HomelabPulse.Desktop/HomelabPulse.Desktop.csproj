@@ -17,6 +17,7 @@
     <PackageReference Include="Serilog.Sinks.File" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Tmds.DBus.Protocol" />
     <ProjectReference Include="..\..\Core\HomelabPulse.Core\HomelabPulse.Core.csproj" />
     <ProjectReference Include="..\HomelabPulse.ApiClient\HomelabPulse.ApiClient.csproj" />
     <ProjectReference Include="..\..\Infrastructure\HomelabPulse.Integrations.Synology\HomelabPulse.Integrations.Synology.csproj" />
