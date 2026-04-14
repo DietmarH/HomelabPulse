@@ -14,6 +14,7 @@
     <EmbeddedResource Include="Resources\ports.json" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="System.Security.Cryptography.Xml" />
     <InternalsVisibleTo Include="HomelabPulse.Core.Tests" />
   </ItemGroup>
 </Project>
